@@ -186,7 +186,9 @@ function serve(port) {
   });
   await step('phone size', async () => {
     await page.setViewportSize({ width: 390, height: 780 }); await frames(3);
-    await page.click('#btn-more'); await page.click('#btn-catalog'); await frames(2);
+    await page.click('#btn-more');
+    if (!(await page.isVisible('#left'))) await page.click('#btn-catalog');
+    await frames(2);
     if (!(await page.isVisible('#left'))) throw new Error('catalogue sheet hidden');
     await page.setViewportSize({ width: size[0], height: size[1] });
   });
