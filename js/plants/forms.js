@@ -20,7 +20,7 @@ function leafPalette(X, hex = X.g.leaf, k = 0) {
 }
 function bloomPalette(hex) {
   const c = lin(hex);
-  return { dark: mix3(mul3(c, 0.55), lin('#4a5a30'), 0.25), mid: mul3(c, 0.85), light: c };
+  return { dark: mix3(mul3(c, 0.3), lin('#3a4a26'), 0.5), mid: mix3(mul3(c, 0.6), lin('#6a7a40'), 0.3), light: c };
 }
 const ramp = (P, k) => (k < 0.5 ? mix3(P.dark, P.mid, k * 2) : mix3(P.mid, P.light, (k - 0.5) * 2));
 const jit = (c, r, a = 0.08) => { const k = 1 + (r() * 2 - 1) * a; return [c[0] * k, c[1] * k * (1 + (r() - 0.5) * a * 0.6), c[2] * k]; };
@@ -97,7 +97,7 @@ const CROWN = {
 export function buildTree(X) {
   const { g, H, W, r, look } = X;
   const C = { ...CROWN[g.crown || 'round'] };
-  const yb = clamp((g.crownBase ?? 0.3) * H, 0.25, H * 0.7);
+  const yb = Math.min(Math.max((g.crownBase ?? 0.3) * H, Math.min(0.25, H * 0.3)), H * 0.7);
   const R = W / 2, Ry = (H - yb) / 2, cy = yb + Ry;
   const tr = X.trunkR, small = H < 2.2;
   const bark = lin(g.bark || '#5a4a40'), barkDark = lin(g.barkDark || '#2a2420'), barkTop = g.barkTop ? lin(g.barkTop) : null;
@@ -161,7 +161,7 @@ export function buildTree(X) {
   if (C.leader && g.crown !== 'vase') tips.push({ p: tpts[tpts.length - 1].clone(), dir: UP.clone() });
 
   // twigs (denser when bare so winter trees read as twiggy, not as sticks)
-  const bare = look.leaf < 0.35 && !look.flowering;
+  const bare = look.leaf < 0.6 && !look.flowering;
   const twN = bare ? 4 : 1;
   for (const p2 of twigs) {
     for (let k = 0; k < twN; k++) {
@@ -186,20 +186,20 @@ export function buildTree(X) {
     const d = randUnit(r); d.y = Math.abs(d.y);
     anchors.push({ p: V(d.x * R * 0.35, cy + d.y * Ry * 0.4, d.z * R * 0.35), dir: d });
   }
-  while (anchors.length > 24) anchors.splice(Math.floor(r() * anchors.length), 1);
+  while (anchors.length > 22) anchors.splice(Math.floor(r() * anchors.length), 1);
   const crownC = V(0, cy, 0);
   let pal = null;
   const shade = crownShade(X, cy, R, Ry, () => pal);
   const blossomFrac = look.flowering ? (g.blossomFrac ?? (X.def.category === 'tree-fruit' ? 0.8 : 0)) : 0;
   const blossomCards = look.flowering ? (g.blossomCards ?? (blossomFrac > 0 ? 1 : 0.3)) : 0;
-  const bloomPal = look.flowering ? bloomPalette(X.def.bloom.color) : null;
+  const bloomPal = look.flowering ? bloomPalette(look.bloomColor) : null;
   const kept = [];
   const cardSize = clamp(0.3 + 0.06 * H, 0.3, 0.75) * (g.cardScale ?? 1);
   const tex = g.tex ?? 0;
   for (const a of anchors) {
     const isBloom = r() < blossomFrac;
     if (!isBloom && r() >= look.leaf) continue;
-    const sz = blobR * r.range(0.75, 1.15) * (isBloom ? 0.85 : 0.7 + 0.3 * look.leaf);
+    const sz = blobR * r.range(0.75, 1.15) * (isBloom ? 0.6 : 0.45 + 0.55 * look.leaf);
     let rx = sz, ry = sz * flat, rz = sz * r.range(0.85, 1.1);
     let c = a.p.clone();
     if (C.droop) { ry = sz * 1.3; rx *= 0.75; rz *= 0.75; c.y -= sz * 0.5; }
@@ -210,11 +210,16 @@ export function buildTree(X) {
     if (e > lim) { const k = lim / e; c = V(c.x * k, cy + (c.y - cy) * k, c.z * k); }
     pal = isBloom ? bloomPal : leafPalette(X);
     const P = pal;
+    if (!isBloom && look.leaf < 0.6) {          // late autumn / early spring: a few leaves on bare twigs, no clusters
+      const nl = Math.round(clamp(sz * 16, 6, 16) * look.leaf * 1.4);
+      blobCards(X, c, rx * 1.1, ry * 1.1, rz * 1.1, nl, cardSize * 0.8, tex, (p, n) => { pal = P; return mul3(ramp(P, 0.55 + 0.4 * r()), 1.3); }, crownC);
+      continue;
+    }
     blob(X.fol, c.x, c.y, c.z, rx, ry, rz, { kind: 'ico1', amp: 0.34, freq: 2.1, seed: r.int(0, 999), center: crownC, blend: 0.5, shade: (x, y, z, a, b, cc) => mul3(shade(x, y, z, a, b, cc), 0.72) });
     const nC = Math.round(clamp(sz * 16, 6, 16) * (0.5 + 0.5 * look.leaf));
     blobCards(X, c, rx, ry, rz, nC, cardSize, tex, (p, n) => { pal = P; return mul3(shade(p.x, p.y, p.z, n.x, n.y, n.z), 1.45); }, crownC);
     if (blossomCards > 0) {
-      const nb = Math.round(nC * blossomCards);
+      const nb = Math.round(nC * blossomCards * (isBloom ? 1.6 : 1));
       blobCards(X, c, rx * 1.02, ry * 1.02, rz * 1.02, nb, cardSize * 0.9, 3, () => jit(bloomPal.light, r, 0.05), crownC);
     }
     if (!isBloom) kept.push({ c, rx, ry, rz });
@@ -423,8 +428,8 @@ export function buildShrub(X) {
     if (r() > amount + 0.15) continue;
     b.rx *= 0.75 + 0.25 * amount; b.ry *= 0.75 + 0.25 * amount; b.rz *= 0.75 + 0.25 * amount;
     pal = leafPalette(X); const P = pal;
-    blob(X.fol, b.c.x, b.c.y, b.c.z, b.rx, b.ry, b.rz, { kind: 'oct1', amp: 0.3, freq: 2.2, seed: r.int(0, 999), center: crownC, blend: 0.5, shade });
-    const nC = Math.round((g.small ? 9 : 7) * (0.5 + 0.5 * amount));
+    blob(X.fol, b.c.x, b.c.y, b.c.z, b.rx, b.ry, b.rz, { kind: 'oct1', amp: 0.3, freq: 2.2, seed: r.int(0, 999), center: crownC, blend: 0.5, shade: (x, y, z, a, bb, c) => mul3(shade(x, y, z, a, bb, c), 0.7) });
+    const nC = Math.round((g.small ? 13 : 12) * (0.5 + 0.5 * amount));
     blobCards(X, b.c, b.rx, b.ry, b.rz, nC, cs, tex, (p, n) => { pal = P; return mul3(shade(p.x, p.y, p.z, n.x, n.y, n.z), 1.45); }, crownC);
     kept.push(b);
   }
@@ -721,7 +726,7 @@ export function buildVine(X) {
       const pts = [V(x, y0, 0.02), V(x + r.range(-0.05, 0.05), (y0 + shootTop) / 2, 0.03), V(x + r.range(-0.08, 0.08), shootTop, 0.03)];
       tube(X.wood, pts, [0.006, 0.004, 0.002], 3, stemC);
       if (!leafy) continue;
-      for (let k = 0; k < 4; k++) {
+      for (let k = 0; k < 7; k++) {
         const p = along(pts, r.range(0.15, 1)), o = V(r.range(-0.3, 0.3), 0.2, r.sign()).normalize();
         leafCard(p.clone().add(V(0, 0, o.z * 0.05)), o, 0.26);
       }
@@ -732,7 +737,7 @@ export function buildVine(X) {
     let P = pal;
     const cy = (y0 + H) / 2;
     const shade = crownShade(X, cy, arm + 0.1, (H - y0) / 2 + 0.1, () => P);
-    blob(X.fol, 0, cy, 0, arm * 0.95, Math.max(0.1, (H - y0) * 0.45), 0.12, { kind: 'oct1', amp: 0.25, seed: 5, center: V(0, cy, 0), shade });
+    blob(X.fol, 0, cy, 0, arm * 0.8, Math.max(0.1, (H - y0) * 0.38), 0.08, { kind: 'oct1', amp: 0.25, seed: 5, center: V(0, cy, 0), shade: (x, y, z, a, b, c) => mul3(shade(x, y, z, a, b, c), 0.65) });
   }
   if (look.fruiting && blobs.length && X.age >= (g.fruitAge ?? 2)) {
     const fc = lin(def.fruitColor);

@@ -13,13 +13,13 @@ ids=("$@"); [ ${#ids[@]} -eq 0 ] && ids=($(ls assets/photos | sed 's/\.jpg$//'))
 mkdir -p "$out/_r"
 land=(); port=()
 for id in "${ids[@]}"; do
-  read -r w h < <(identify -format '%w %h' "assets/photos/$id.jpg")
+  read -r w h < <(identify -format '%w %h\n' "assets/photos/$id.jpg")
   if [ "$w" -ge "$h" ]; then land+=("$page?photo=$id$extra" "$out/_r/$id.jpg"); else port+=("$page?photo=$id$extra" "$out/_r/$id.jpg"); fi
 done
 [ ${#land[@]} -gt 0 ] && node tools/shot.cjs --size 640x480 "${land[@]}"
 [ ${#port[@]} -gt 0 ] && node tools/shot.cjs --size 480x640 "${port[@]}"
 for id in "${ids[@]}"; do
-  read -r w h < <(identify -format '%w %h' "$out/_r/$id.jpg")
+  read -r w h < <(identify -format '%w %h\n' "$out/_r/$id.jpg")
   convert "$out/_r/$id.jpg" \( "assets/photos/$id.jpg" -resize "${w}x${h}!" \) +append -quality 80 "$out/$id.jpg"
 done
 echo "sheets in $out"

@@ -23,8 +23,8 @@ const inRange = (m, a, b) => (a <= b ? m >= a && m <= b : m >= a || m <= b);
 const overlap = (range, months) => (range ? months.filter((m) => inRange(m, range.from, range.to)).length : 0);
 
 // deciduous foliage amount / autumn colour by month
-const LEAF = { 1: 0, 2: 0, 3: 0.1, 4: 0.55, 5: 0.9, 6: 1, 7: 1, 8: 1, 9: 1, 10: 0.65, 11: 0.2, 12: 0 };
-const AUT = { 9: 0.15, 10: 0.7, 11: 0.95 };
+const LEAF = { 1: 0, 2: 0, 3: 0.1, 4: 0.55, 5: 0.9, 6: 1, 7: 1, 8: 1, 9: 0.95, 10: 0.45, 11: 0.12, 12: 0 };
+const AUT = { 9: 0.2, 10: 0.85, 11: 1 };
 const FRESH = { 3: 1, 4: 1, 5: 0.8, 6: 0.25 };
 
 /** What the plant looks like at this time: drives both the build and the cache key. */
