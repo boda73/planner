@@ -65,9 +65,9 @@ export const osbTex = (base = '#a9763f', key = 'osb') => tex(key + base, 256, 25
   c.fillStyle = base; c.fillRect(0, 0, w, h);
   const col = new THREE.Color(base);
   for (let i = 0; i < 900; i++) {
-    const k = 0.75 + r() * 0.5;
+    const k = 0.86 + r() * 0.26;
     c.fillStyle = `rgb(${Math.min(255, col.r * 255 * k) | 0},${Math.min(255, col.g * 255 * k) | 0},${Math.min(255, col.b * 255 * k) | 0})`;
-    c.globalAlpha = 0.55;
+    c.globalAlpha = 0.45;
     c.save();
     c.translate(r() * w, r() * h);
     c.rotate((r() - 0.5) * 0.9);

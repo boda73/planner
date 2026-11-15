@@ -47,7 +47,7 @@
 | P0 | Каркас і інфраструктура | `js/config`, `js/core`, `js/lib`, `vendor`, `tools`, `dev/view.*`, `docs`, `CLAUDE.md` | ✅ готово | сесії 2, 3 |
 | P1 | Світ: земля, бруківка, паркани, оточення, небо, сонце | `js/world/**`, крім `structures*` | 🔄 в роботі | `charming-babbage`, з 15.11 21:00 |
 | P2 | Будиночок і сарайчик | `js/world/structures.js`, `js/world/structures-*.js` | 🔄 в роботі | `charming-babbage`, з 15.11 21:00 |
-| P3 | Меблі (6 наявних + 8 для планування) | `js/items/furniture.js`, `js/items/furniture-*.js`, `dev/furniture.*` | 🔄 в роботі | `charming-babbage`, з 15.11 21:00 |
+| P3 | Меблі (6 наявних + 8 для планування) | `js/items/furniture.js`, `js/items/furniture-*.js`, `dev/furniture.*` | ✅ готово (звірка з фото — у P6) | `charming-babbage` |
 | P4 | Рослини: генератор і ~32 види | `js/plants/**`, `dev/plants.*` | 🔄 в роботі | `charming-babbage`, з 15.11 21:00 |
 | P5 | Застосунок: види, керування, планувальник, інтерфейс | `index.html`, `css/**`, `js/main.js`, `js/app/**`, `tools/smoke.cjs` | 🔄 в роботі | `charming-babbage`, з 15.11 21:00 |
 | P6 | Збирання докупи, звірка з фото, калібрування камер | усе; числа — в `js/config/site.js` | ⏳ після P1–P5 | `charming-babbage` |
@@ -214,6 +214,11 @@
 - 15.11 21:00, сесія 2: ліміт відновився. Гілку сесії 3 влито (fast-forward до `8aaaa14`). Додано протокол
   паралельної роботи, таблицю гілок, вільні пакети P8–P13, докладні описи пакетів. P1–P5 перезапущено тут;
   обсяг першої версії урізано заради економії (меблів 6 + 8, рослин ~32).
+- 15.11 21:20, сесія 2: **P3 готово** — 14 предметів (`swing_canopy`, `picnic_table`, `tripod_grill`,
+  `concrete_bin`, `trampoline`, `planter_box`, `bench`, `raised_bed`, `compost_bin`, `rain_barrel`, `pergola`,
+  `greenhouse`, `brick_bbq`, `sun_lounger`), галерея `dev/furniture.html` (`?focus=<id>`, `?az=`, `?tri=1`).
+  Приблизно: полози гойдалки — два прямі відрізки, сидіння — проста сітка; у батута немає пружин; двері
+  теплиці — лише рама. У сцені з фото ще не звірено.
 
 ## На наступні ревізії
 
