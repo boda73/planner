@@ -1,32 +1,50 @@
-// STUB — replaced by the world module (ground, paving, fences, surroundings, sky, sun).
-// Contract (see CLAUDE.md → "Module contracts"):
-//   createWorld({ scene, renderer, camera, site, assetsBase }) → Promise<World>
-//   World = { group, groundMeshes, colliders, setSun({azimuth, elevation}), setSeason(season),
-//             setSatelliteOverlay(opacity), update(dt, camera), heightAt(X, Y) }
+// World module: ground, paving, fences, surroundings, sky, sun light.  Contract: see CLAUDE.md → "Module contracts".
 import * as THREE from '../lib/three.js';
-import { sunDirectionWorld } from '../core/sun.js';
+import { createGround } from './ground.js';
+import { createPaving } from './paving.js';
+import { createFences } from './fences.js';
+import { createSurroundings } from './surroundings.js';
+import { createSky } from './sky.js';
 
-export async function createWorld({ scene, site }) {
+function loadTexture(url, maxAniso) {
+  return new Promise((resolve) => {
+    new THREE.TextureLoader().load(url, (t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = maxAniso;
+      t.generateMipmaps = true;
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      resolve(t);
+    }, undefined, () => { console.error('[world] cannot load ' + url); resolve(null); });
+  });
+}
+
+export async function createWorld({ scene, renderer, camera, site, assetsBase = 'assets/', quality = 'high' }) {
   const group = new THREE.Group();
   group.name = 'world';
   scene.add(group);
-  scene.background = new THREE.Color(0x9fc4e8);
+  const maxAniso = quality === 'low' ? 4 : Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(site.plot.width, site.plot.depth),
-    new THREE.MeshStandardMaterial({ color: 0x5f8f3a, roughness: 1 }));
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(site.plot.width / 2, 0, -site.plot.depth / 2);
-  ground.receiveShadow = true;
-  group.add(ground);
+  const [contextTex, lawnTex] = await Promise.all([
+    loadTexture(assetsBase + 'ground/context.jpg', maxAniso),
+    loadTexture(assetsBase + 'ground/lawn.jpg', maxAniso),
+  ]);
 
-  const hemi = new THREE.HemisphereLight(0xcfe2ff, 0x6b7a4a, 0.9);
-  const sun = new THREE.DirectionalLight(0xfff2dd, 2.5);
-  sun.castShadow = true;
-  group.add(hemi, sun, sun.target);
-  sun.target.position.set(10, 0, -12.5);
+  const sky = createSky({ renderer, quality, scene });
+  group.add(sky.group);
 
-  const colliders = [];
+  const ground = createGround({ site, lawnTex, contextTex, quality, maxAniso });
+  group.add(ground.group);
+
+  const paving = createPaving({ site, maxAniso });
+  group.add(paving.group);
+
+  const fences = createFences({ site });
+  group.add(fences.group);
+
+  const surroundings = createSurroundings({ site });
+  group.add(surroundings.group);
+
+  const colliders = [...fences.colliders];
   try {
     const s = await import('./structures.js');
     const built = s.createStructures(site);
@@ -36,16 +54,25 @@ export async function createWorld({ scene, site }) {
     console.error('[world] structures failed:', err);
   }
 
+  const groundMeshes = [ground.lawn, ...paving.meshes];
+  let lastSun = { azimuth: 180, elevation: 40 };
+  sky.setSun(lastSun);
+
   return {
     group,
-    groundMeshes: [ground],
+    groundMeshes,
     colliders,
     setSun(pos) {
-      sun.position.copy(sunDirectionWorld(pos)).multiplyScalar(60).add(sun.target.position);
+      lastSun = pos;
+      sky.setSun(pos);
     },
-    setSeason() {},
-    setSatelliteOverlay() {},
-    update() {},
+    setSeason(season) {
+      ground.setSeason(season);
+      surroundings.setSeason(season);
+      renderer.shadowMap.needsUpdate = true;
+    },
+    setSatelliteOverlay(opacity) { ground.setOverlay(opacity); },
+    update(dt, cam = camera) { sky.update(cam); },
     heightAt() { return 0; },
   };
 }
