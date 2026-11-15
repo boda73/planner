@@ -38,7 +38,10 @@ app UI; its URL params are documented at the top of `dev/view.js` (`photo=`, `ov
 
 ## Coordinates (never deviate)
 
-- **Plot metres**: `X` east 0…20, `Y` north 0…25, origin = SW corner. **World**: `x = X`, `y = up`, `z = −Y`.
+- **Plot metres**: `X` east 0…20, `Y` north 0…25, origin = SW corner of the measuring rectangle.
+  **World**: `x = X`, `y = up`, `z = −Y`. The fences enclose a slightly larger area, `SITE.plot.bounds`
+  (`plotBounds()` in `core/coords.js`) — use it for anything about "inside the plot".
+- Items may carry `months: [from, to]` (seasonal furniture): draw them only when `inSeason(item, month)`.
 - Plot bearing: 0 = +Y, clockwise. True north = plot bearing − 10.5° (the plot is turned 10.5° clockwise).
 - Every placeable model: origin on the ground at its centre, +Y up, **front = local −Z**, metres.
   `object.rotation.y = bearingToYaw(bearing)`.

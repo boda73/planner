@@ -1,6 +1,7 @@
 # Site survey — what the real place looks like
 
-Allotment-type garden plot near Tarnów (PL), 50.011°N 21.007°E, **20 m (E–W) × 25 m (N–S)**, flat.
+Allotment-type garden plot near Tarnów (PL), 50.011°N 21.007°E, nominally **20 m (E–W) × 25 m (N–S)**, flat.
+The fenced area is a little larger: `SITE.plot.bounds = [-1.7, 0, 20, 25.4]` — see "Fences".
 The plot's long axis points 10.5° east of true north. A quiet street runs along the north side.
 Coordinates below are plot metres (X east, Y north, origin SW corner) — the same numbers as `js/config/site.js`.
 
@@ -67,6 +68,10 @@ Y=0  ─ south fence: grey welded panels ───┴──────┴─ br
 
 ## Fences (boundary)
 
+X = 0 lies 0.5 m west of the young thuja row. The west fence stands ≈1.7 m further west (X = −1.7): IMG_2873
+shows a bare strip between the row and the fence, IMG_4017 was shot from that strip, and the satellite shows it
+as a brown band. The north fence follows the street edge (Y ≈ 25.4), ≈1.8 m behind the hedge (IMG_4008).
+
 - North: wire fence carrying a dark-green shade net `#2f3d33` (opaque-ish), ≈1.6 m, black steel posts every 2.5 m.
 - East: old chain-link, rusty brown `#6b5a48`, ≈1.5 m, see-through; behind it the neighbour's overgrown shrubs
   2.5–3 m high form a green wall.
@@ -77,7 +82,7 @@ Y=0  ─ south fence: grey welded panels ───┴──────┴─ br
 
 ## Plants on the plot today
 
-- **North hedge**: 24 columnar thujas ('Smaragd'), 2.5 m tall, 0.85 m wide, touching; yellowish green on the sunny
+- **North hedge**: 26 columnar thujas ('Smaragd') from the west fence to the shed, 2.5 m tall, 0.85 m wide, touching; yellowish green on the sunny
   side (`#7a9440`), dark green in shade (`#2f4a22`), dense from the ground up, softly pointed tips.
 - **West row**: ~32 young thujas 0.6–0.9 m, 0.65 m apart. **South row**: 9 young thujas ≈0.6 m, 1.25 m apart.
 - **Orchard** (SW quarter): five sour cherries and a peach, 4–4.6 m tall, trunks 15–20 cm (one leans), crowns
@@ -95,6 +100,7 @@ Y=0  ─ south fence: grey welded panels ───┴──────┴─ br
 - **Tripod grill**: black steel tripod 1.6 m tall, round grate Ø 0.5 m on chains, black fire bowl Ø 0.6 m below.
 - **Concrete bin**: exposed-aggregate cylinder Ø 0.45 × 0.6 m `#a8a59c`, galvanised rim.
 - **Trampoline**: Ø 3.0 m, black mat at 0.75 m, blue padded rim 0.3 m wide, galvanised W-legs, no net.
+  Seasonal: out from May to September, gone in the late-October photos (`months: [5, 9]`).
 - **Planter box**: 0.6 × 0.6 × 0.28 m, four horizontal red-brown slats per side `#7a3b2a`, corner posts, mulch on top.
 
 ## Surroundings
