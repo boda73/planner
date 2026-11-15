@@ -46,10 +46,11 @@ function drawAtlas(ctx, S) {
       const n = 5;
       for (let i = 1; i <= n; i++) {
         const t = i / (n + 1), side = i % 2 ? 1 : -1;
-        frond(x + (x2 - x) * t, y + (y2 - y) * t, a + side * r.range(0.6, 0.9), len * (0.5 - t * 0.25), w * 0.75, depth - 1, Math.min(255, v + r.range(0, 25)));
+        frond(x + (x2 - x) * t, y + (y2 - y) * t, a + side * r.range(0.5, 0.8), len * (0.55 - t * 0.25), w * 0.72, depth - 1, Math.min(255, v + r.range(0, 25)));
       }
     };
-    for (let i = 0; i < 7; i++) frond(C / 2 + r.range(-30, 30), C * 0.98, r.range(-0.7, 0.7), C * r.range(0.6, 0.85), 9, 2, r.range(150, 210));
+    ctx.beginPath(); ctx.ellipse(C / 2, C * 0.55, C * 0.46, C * 0.45, 0, 0, Math.PI * 2); ctx.clip();
+    for (let i = 0; i < 6; i++) frond(C / 2 + r.range(-20, 20), C * 0.99, r.range(-0.6, 0.6), C * r.range(0.6, 0.85), 11, 3, r.range(150, 215));
   });
   // 2: needles (shoots with needles on both sides)
   cell(0, 1, () => {

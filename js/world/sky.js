@@ -13,7 +13,7 @@ const P = {
   sunWarm: srgb(1.0, 0.6, 0.3), sunWhite: srgb(1.0, 0.95, 0.88), moon: srgb(0.45, 0.55, 0.85),
   hemiDaySky: srgb(0.8, 0.88, 1.0), hemiDayGround: srgb(0.42, 0.48, 0.28),
   hemiDuskSky: srgb(0.55, 0.55, 0.75), hemiDuskGround: srgb(0.3, 0.25, 0.22),
-  hemiNightSky: srgb(0.12, 0.17, 0.32), hemiNightGround: srgb(0.05, 0.06, 0.06),
+  hemiNightSky: srgb(0.22, 0.29, 0.52), hemiNightGround: srgb(0.1, 0.11, 0.12),
 };
 
 const DOME_VERT = /* glsl */`
@@ -101,10 +101,10 @@ export function createSky({ renderer, quality, scene }) {
 
     let I, dir = tmpDir;
     if (e > -1.5) {
-      I = 3.3 * sm(e, -1.5, 9) * (0.6 + 0.4 * sm(e, 3, 26));
+      I = 8.0 * sm(e, -1.5, 9) * (0.6 + 0.4 * sm(e, 3, 26));
       sun.color.copy(tmp);
     } else {
-      I = 0.22 * (1 - sm(e, -10, -1.5));
+      I = 0.6 * (1 - sm(e, -10, -1.5));
       sun.color.copy(P.moon);
       dir = sunDirectionWorld({ azimuth: 200, elevation: 42 }, new THREE.Vector3());
     }
@@ -118,7 +118,7 @@ export function createSky({ renderer, quality, scene }) {
     hemi.color.copy(tmp);
     tmp.copy(P.hemiNightGround).lerp(P.hemiDayGround, day).lerp(P.hemiDuskGround, dusk * 0.5);
     hemi.groundColor.copy(tmp);
-    hemi.intensity = 0.14 + 0.62 * day;
+    hemi.intensity = 0.5 + 0.7 * day;
 
     // fog / background = horizon haze
     fog.color.copy(hor);

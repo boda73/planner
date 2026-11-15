@@ -90,7 +90,9 @@ export function createFences({ site }) {
       } else {
         mats[f.type] = new THREE.MeshStandardMaterial({
           color: t.colour, roughness: t.rough, metalness: f.type === 'mesh' ? 0.6 : 0.2, side: THREE.DoubleSide,
-          alphaMap: alphaTexture(f.type), alphaTest: f.type === 'net' ? 0.5 : 0.12, alphaToCoverage: t.a2c,
+          alphaMap: alphaTexture(f.type),
+          // see-through wire fences blend (mip-averaged coverage looks right at any distance); the net is alpha-tested
+          ...(f.type === 'net' ? { alphaTest: 0.5, alphaToCoverage: true } : { transparent: true, depthWrite: false }),
         });
       }
     }
@@ -126,7 +128,7 @@ export function createFences({ site }) {
 
   const posts = new THREE.Mesh(BufferGeometryUtils.mergeGeometries(postGeoms),
     new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7, metalness: 0.2 }));
-  posts.castShadow = posts.receiveShadow = true;
+  posts.receiveShadow = true;
   group.add(posts);
   return { group, colliders };
 }

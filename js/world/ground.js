@@ -118,7 +118,7 @@ export function createGround({ site, lawnTex, contextTex, quality, maxAniso }) {
         float dA = texture2D(detailTex, vWXZ * 2.3).r;
         float dB = texture2D(detailTex, vWXZ * 0.43 + 0.31).r;
         float dC = texture2D(detailTex, vWXZ * 7.1 + 0.77).r;
-        diffuseColor.rgb *= (0.55 + 0.9 * dA) * (0.8 + 0.4 * dB) * (0.8 + 0.4 * dC);`);
+        diffuseColor.rgb *= (1.0 + (dA - 0.5) * 1.5) * (1.0 + (dB - 0.5) * 0.9) * (1.0 + (dC - 0.5) * 1.7);`);
   };
   const lawn = plane(PW, PD, PW / 2, 0, -PD / 2, lawnMat);
   group.add(lawn);
@@ -147,7 +147,7 @@ export function createGround({ site, lawnTex, contextTex, quality, maxAniso }) {
   }
 
   const TINT = {
-    spring: [1.06, 1.12, 0.92], summer: [1.0, 1.06, 0.93], autumn: [1.0, 0.97, 0.9], winter: [0.86, 0.9, 0.88],
+    spring: [1.0, 1.08, 1.0], summer: [1.05, 1.05, 1.05], autumn: [1.2, 1.0, 1.7], winter: [0.95, 0.95, 1.0],
   };
   return {
     group, lawn,

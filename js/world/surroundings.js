@@ -41,7 +41,7 @@ class Mesher {
 }
 
 const ICO = [IcosahedronCache(0), IcosahedronCache(1)];
-function IcosahedronCache(detail) { return new THREE.IcosahedronGeometry(1, detail).toNonIndexed(); }
+function IcosahedronCache(detail) { return new THREE.IcosahedronGeometry(1, detail); }
 
 /** Lumpy ellipsoid; colourFn(y01, noise) → Color. Normals are the smooth ellipsoid normals. */
 function blob(m, cx, cy, cz, rx, ry, rz, detail, seed, colourFn) {
@@ -323,7 +323,7 @@ export function createSurroundings({ site }) {
 
   const vegMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 });
   const near = new THREE.Mesh(new THREE.BufferGeometry(), vegMat);
-  near.castShadow = near.receiveShadow = true;
+  near.receiveShadow = true;   // no cast: neighbours' trees would blot the lawn more than the real photos show
   const far = new THREE.Mesh(new THREE.BufferGeometry(), vegMat);
   group.add(near, far);
 
