@@ -26,6 +26,7 @@ export function createPlanTools(app) {
     t('tool-sat', 'sat', 'Супутник', (on) => app.setSatellite(on)),
     t('tool-labels', 'tag', 'Назви', (on) => app.setLabels(on)));
   const read = document.getElementById('readout');
+  read.textContent = 'Наведіть курсор на ділянку';
   return {
     show(v) { root.hidden = !v; read.hidden = !v; },
     readout(p) { read.textContent = p ? `${p.X.toFixed(1)} м від західного паркану, ${p.Y.toFixed(1)} м від південного` : 'Наведіть курсор на ділянку'; },
