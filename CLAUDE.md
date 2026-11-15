@@ -3,6 +3,7 @@
 A browser 3D model of a real 20 × 25 m garden plot. You walk through it and plan what to plant where and
 how it will look in N years. Static site: plain ES modules + vendored three.js r170. **No build step, no CDN.**
 UI language: **Ukrainian**. Code, comments, commits: English.
+**Status, work packages and who owns which files: `docs/PLAN.md` — read it first, keep it current.**
 
 ## Run / look at it
 
@@ -23,6 +24,7 @@ app UI; its URL params are documented at the top of `dev/view.js` (`photo=`, `ov
 | `js/config/site.js` | **SITE**: measured geometry of the plot, existing items, photo camera poses | single source of truth; see `docs/SURVEY.md` |
 | `js/core/coords.js` | coordinate conventions + helpers | read the header comment first |
 | `js/core/sun.js`, `js/core/renderer.js` | sun position for 50.01°N; shared renderer setup | |
+| `js/core/procedural.js` | seeded RNG, value noise, colour helpers, canvas → texture, height → normal map | use it for every procedural texture |
 | `js/lib/three.js`, `js/lib/addons.js` | the only way to import three / addons | vendored in `vendor/three` |
 | `js/world/` | ground, paving, fences, surroundings, sky, lights (`index.js`); house + shed (`structures.js`) | |
 | `js/items/furniture.js` | furniture catalogue + models | |
@@ -45,12 +47,12 @@ app UI; its URL params are documented at the top of `dev/view.js` (`photo=`, `ov
 
 ```js
 // js/world/index.js
-createWorld({ scene, renderer, camera, site, assetsBase }) → Promise<World>
+createWorld({ scene, renderer, camera, site, assetsBase, quality = 'high' }) → Promise<World>   // quality 'low' = phones
 World = {
   group,                       // THREE.Group already added to the scene
   groundMeshes,                // Mesh[] to raycast for placing items / walking (lawn + paving)
   colliders,                   // [{type:'box', minX, minY, maxX, maxY, h}] in plot metres (fences, buildings)
-  setSun({azimuth, elevation}),// true azimuth/elevation in degrees → light, sky, fog, ambient
+  setSun({azimuth, elevation}),// true azimuth/elevation in degrees → light, sky, fog, ambient (also dusk / night)
   setSeason(season),           // 'spring' | 'summer' | 'autumn' | 'winter' → surroundings / lawn tint
   setSatelliteOverlay(opacity),// 0…1: show the raw satellite photo over the plot (plan view aid)
   update(dt, camera),          // per frame
@@ -61,10 +63,23 @@ createStructures(site) → { group, colliders }
 // js/items/furniture.js
 FURNITURE: Def[];  createFurniture(id, opts) → Object3D
 // js/plants/catalog.js, js/plants/generate.js
-PLANTS: Def[];  createPlant(id, {age, season, seed}) → Object3D;  plantSizeAt(id, age) → {height, width};  ageForHeight(id, h) → years
+PLANTS: Def[];  createPlant(id, {age, season, month, seed}) → Object3D;  plantSizeAt(id, age) → {height, width};  ageForHeight(id, h) → years
 // js/items/registry.js  (what the app imports)
-CATEGORIES, loadCatalog(), listDefs(), getDef(id), createItemObject(id, {age, season, seed}), itemSizeAt(id, age), ageForHeight(id, h)
+CATEGORIES, loadCatalog(), listDefs(), getDef(id), createItemObject(id, {age, season, month, seed}), itemSizeAt(id, age), ageForHeight(id, h)
 ```
+
+- **Defs** (the app shows these fields; names and notes in Ukrainian):
+  plant `{ id, name, latin, category, matureHeight, matureWidth, yearsToMature, startAge, evergreen, sun: 'full'|'part'|'shade',
+  minSpacing, bloom?: {from, to, color}, harvest?: {from, to}, note }` (months 1–12; `category` = an id from `CATEGORIES`);
+  furniture `{ id, name, category: 'furniture'|'structure', matureHeight, matureWidth, footprint: {w, d} | {r}, note? }`.
+- **Age** = years of growth. A newly planted item starts at `def.startAge` (a typical nursery plant); the timeline adds years.
+  `month` (1–12) is optional and only refines the look inside a season (blossom, fruit).
+- **Cheap and shared**: `createPlant` / `createFurniture` run for every item whenever the year or month changes — cache
+  geometry (species × growth stage × variant) and materials inside the module, keep a repeated call under ~2 ms.
+  Returned objects share those resources: callers only remove them from the scene and never `dispose()` them.
+- **Shadows**: the world owns the sun light, with a fixed shadow frustum covering the plot. The app runs with
+  `renderer.shadowMap.autoUpdate = false`, so `setSun` / `setSeason` must set `renderer.shadowMap.needsUpdate = true`.
+- The world must keep working when `structures.js` throws (keep the try/catch around it).
 
 Item ids used by `SITE.existingItems` must keep existing: `thuja_smaragd`, `cherry_sour`, `peach`, `apple`,
 `rose_bush`, `yucca`, `blueberry`, `swing_canopy`, `picnic_table`, `tripod_grill`, `concrete_bin`, `trampoline`, `planter_box`.
@@ -84,6 +99,8 @@ Item ids used by `SITE.existingItems` must keep existing: `thuja_smaragd`, `cher
   `docs/SURVEY.md` already describes what they show.
 - Verify visually with `tools/shot.cjs` at the default 960×720 or smaller; several pages per call; look at a
   screenshot only when you changed something visible. Photo matching: `dev/view.html?photo=<id>&overlay=0.5`.
-- Subagents: edit only the files you were assigned, never run git commands that change state, finish with a short
-  report (what works, what is approximate, any contract deviation).
+- Subagents: edit only the files your work package owns (`docs/PLAN.md`), never run git commands that change state,
+  keep your screenshots in your own scratch folder, finish with a short report (what works, what is approximate,
+  any contract deviation). The lead commits and updates `docs/PLAN.md`.
+- First version fast: true proportions and colours first, then the details visible in the photos, then stop.
 - Measurements live in `site.js`. If something looks misplaced, fix the number there (and say why), not in a model.

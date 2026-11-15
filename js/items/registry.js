@@ -81,7 +81,7 @@ function placeholder(id, age) {
 /**
  * Build the 3D object for an item.
  * @param {string} id
- * @param {{age?:number, season?:'spring'|'summer'|'autumn'|'winter', seed?:number}} opts
+ * @param {{age?:number, season?:'spring'|'summer'|'autumn'|'winter', month?:number, seed?:number}} opts
  * @returns {THREE.Object3D} never throws — falls back to a magenta placeholder.
  */
 export function createItemObject(id, opts = {}) {
@@ -89,7 +89,7 @@ export function createItemObject(id, opts = {}) {
   const age = opts.age ?? 3;
   try {
     let obj = null;
-    if (def?.kind === 'plant') obj = plantsApi.createPlant(id, { age, season: opts.season ?? 'summer', seed: opts.seed ?? 1 });
+    if (def?.kind === 'plant') obj = plantsApi.createPlant(id, { age, season: opts.season ?? 'summer', month: opts.month, seed: opts.seed ?? 1 });
     else if (def?.kind === 'furniture') obj = furnitureApi.createFurniture(id, opts);
     if (obj) return obj;
   } catch (err) {
