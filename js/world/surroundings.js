@@ -62,8 +62,8 @@ function leaf(season, kind, treeRand, light) {
   switch (season) {
     case 'spring': h = 0.235 + (treeRand - 0.5) * 0.03; s = 0.6; l = 0.27 + 0.2 * light; break;
     case 'autumn': {
-      h = treeRand < 0.3 ? 0.14 : treeRand < 0.55 ? 0.105 : treeRand < 0.8 ? 0.19 : 0.06;
-      s = 0.7; l = 0.27 + 0.2 * light; break;
+      h = treeRand < 0.3 ? 0.14 : treeRand < 0.55 ? 0.11 : treeRand < 0.85 ? 0.19 : 0.085;
+      s = 0.46; l = 0.24 + 0.18 * light; break;
     }
     case 'winter': h = 0.08; s = 0.12; l = 0.15 + 0.12 * light; break;
     default:

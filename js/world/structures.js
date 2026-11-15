@@ -26,7 +26,7 @@ function mats() {
     annexWood: std({ map: brownBoardTex('#6a4630', 'annexBoards'), roughness: 0.85 }),
     southOsb: std({ map: osbTex('#8c5e36', 'osbBrown'), roughness: 0.85 }),
     oldBoards: std({ map: oldBoardsTex(), roughness: 0.95 }),
-    roof: std({ map: roofSheetTex(), bumpMap: roofSheetBump(), bumpScale: 0.4, roughness: 0.55, metalness: 0.35, side: THREE.DoubleSide }),
+    roof: std({ map: roofSheetTex(), bumpMap: roofSheetBump(), bumpScale: 0.4, roughness: 0.72, metalness: 0.12, side: THREE.DoubleSide }),
     fascia: std({ color: '#a8322d', roughness: 0.7 }),
     soffit: std({ map: soffitTex(), roughness: 0.9 }),
     eaveEdge: std({ color: '#4a2228', roughness: 0.6, metalness: 0.3 }),

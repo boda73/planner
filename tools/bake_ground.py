@@ -2,7 +2,7 @@
 """Bake ground textures from the satellite photo (images/planner/planCosmos.png).
 
   assets/ground/context.jpg   warped satellite, plot-aligned, X ∈ [-12, 26], Y ∈ [-11, 34]  @ 32 px/m  (1216×1440)
-  assets/ground/lawn.jpg      clean lawn for the plot itself, X ∈ [0, 20], Y ∈ [0, 25]       @ 64 px/m  (1280×1600)
+  assets/ground/lawn.jpg      clean lawn for the fenced area, X ∈ [-1.7, 20], Y ∈ [0, 25.4]  @ 64 px/m  (1389×1626)
 
 Both are "north up" in PLOT coordinates: left edge = X0, top edge = Y1.
 The affine below is the survey result (see docs/SURVEY.md); change it there and here together.
@@ -19,7 +19,7 @@ V = (4.22, -26.67)        # pixels per metre of +Y (north)
 
 CONTEXT = dict(X0=-12, Y0=-11, X1=26, Y1=34, R=32)
 FAR_GROUND = np.array([88, 102, 72], np.float32) / 255     # colour the context fades to at its rim (use it for the far ground)
-LAWN = dict(X0=0, Y0=0, X1=20, Y1=25, R=64)
+LAWN = dict(X0=-1.7, Y0=0, X1=20, Y1=25.4, R=64)      # = SITE.plot.bounds (the fenced area)
 LAWN_TARGET = np.array([104, 128, 56], np.float32) / 255     # mean lawn colour seen in the ground-level photos
 
 

@@ -54,7 +54,8 @@ export async function createWorld({ scene, renderer, camera, site, assetsBase = 
     console.error('[world] structures failed:', err);
   }
 
-  const groundMeshes = [ground.lawn, ...paving.meshes];
+  // the satellite plane is included so items can stand on the fenced strip west of the lawn rectangle
+  const groundMeshes = [ground.lawn, ...paving.meshes, ...(ground.context ? [ground.context] : [])];
   let lastSun = { azimuth: 180, elevation: 40 };
   sky.setSun(lastSun);
 

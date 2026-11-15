@@ -1,6 +1,7 @@
 // Plan view: orthographic top-down, north (plot +Y) up; own pan/zoom; optional 1 m grid.
 import * as THREE from '../../lib/three.js';
 import { SITE } from '../../config/site.js';
+import { plotBounds } from '../../core/coords.js';
 
 export function createPlan({ canvas, scene }) {
   const camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 600);
@@ -12,8 +13,9 @@ export function createPlan({ canvas, scene }) {
 
   // grid
   const pts = [];
-  for (let x = 0; x <= SITE.plot.width; x++) pts.push(x, 0.06, 0, x, 0.06, -SITE.plot.depth);
-  for (let y = 0; y <= SITE.plot.depth; y++) pts.push(0, 0.06, -y, SITE.plot.width, 0.06, -y);
+  const B = plotBounds();
+  for (let x = Math.ceil(B.minX); x <= B.maxX; x++) pts.push(x, 0.06, -B.minY, x, 0.06, -B.maxY);
+  for (let y = Math.ceil(B.minY); y <= B.maxY; y++) pts.push(B.minX, 0.06, -y, B.maxX, 0.06, -y);
   const gg = new THREE.BufferGeometry();
   gg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
   const gm = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });

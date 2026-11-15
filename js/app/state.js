@@ -14,6 +14,7 @@ export function initialItems() {
       rot: it.rot ?? Math.round(((i * 137.5) % 360) * 10) / 10,
       age0: def?.kind === 'plant' ? +ageForHeight(it.id, it.h ?? 1).toFixed(2) : 0,
       existing: true,
+      ...(it.months ? { months: it.months } : {}),
     };
   });
 }
@@ -103,6 +104,7 @@ export function createState() {
         if (!it || !getDef(it.id)) continue;
         const o = { uid: String(it.uid || ('i' + items.length)), id: it.id, X: num(it.X, 10), Y: num(it.Y, 10), rot: num(it.rot, 0), age0: Math.max(0, num(it.age0, 0)) };
         if (it.existing) o.existing = true;
+        if (Array.isArray(it.months) && it.months.length === 2) o.months = it.months.map(Number);
         items.push(o);
       }
       s.undoStack.length = 0; s.redoStack.length = 0;

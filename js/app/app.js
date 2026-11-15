@@ -3,7 +3,7 @@ import * as THREE from '../lib/three.js';
 import { SITE } from '../config/site.js';
 import { createRenderer } from '../core/renderer.js';
 import { sunPosition, seasonOfMonth } from '../core/sun.js';
-import { poseCamera } from '../core/coords.js';
+import { poseCamera, plotBounds } from '../core/coords.js';
 import { loadCatalog, getDef } from '../items/registry.js';
 import { createState, initialItems } from './state.js';
 import { loadSaved, save, loadFlag } from './storage.js';
@@ -168,7 +168,8 @@ export async function startApp() {
   app.duplicate = (uid) => {
     const it = state.find(uid);
     if (!it) return null;
-    const n = app.place(it.id, Math.min(SITE.plot.width - 0.1, it.X + 0.6), Math.min(SITE.plot.depth - 0.1, it.Y + 0.6), { rot: it.rot, age0: it.age0 });
+    const B = plotBounds();
+    const n = app.place(it.id, Math.min(B.maxX - 0.1, it.X + 0.6), Math.min(B.maxY - 0.1, it.Y + 0.6), { rot: it.rot, age0: it.age0 });
     state.select(n);
     return n;
   };

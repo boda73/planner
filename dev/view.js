@@ -13,7 +13,7 @@
 // Sets window.__READY = true once everything is loaded and one frame is rendered; errors go to #err.
 import * as THREE from '../js/lib/three.js';
 import { SITE } from '../js/config/site.js';
-import { poseCamera, fovToContainPhoto, bearingToYaw } from '../js/core/coords.js';
+import { poseCamera, fovToContainPhoto, bearingToYaw, inSeason } from '../js/core/coords.js';
 import { sunPosition, seasonOfMonth } from '../js/core/sun.js';
 import { createRenderer } from '../js/core/renderer.js';
 import { loadCatalog, createItemObject, ageForHeight, getDef } from '../js/items/registry.js';
@@ -97,6 +97,7 @@ async function main() {
     itemsGroup.name = 'items';
     SITE.existingItems.forEach((it, i) => {
       if (only && it.tag !== only && it.id !== only) return;
+      if (!inSeason(it, when.month)) return;
       const def = getDef(it.id);
       const age = def?.kind === 'plant' ? ageForHeight(it.id, it.h ?? 1) + year : 0;
       const obj = createItemObject(it.id, { age, season, seed: i + 1 });

@@ -1,6 +1,6 @@
 // Builds and keeps the 3D objects for state.items; derives walking colliders.
 import * as THREE from '../lib/three.js';
-import { bearingToYaw } from '../core/coords.js';
+import { bearingToYaw, inSeason } from '../core/coords.js';
 import { seasonOfMonth } from '../core/sun.js';
 import { createItemObject, getDef, itemSizeAt } from '../items/registry.js';
 
@@ -26,6 +26,11 @@ export function createItems({ scene, state, renderer }) {
       seen.add(it.uid);
       const def = getDef(it.id);
       if (!def) continue;
+      if (!inSeason(it, month)) {            // seasonal item that is stored away this month
+        const gone = entries.get(it.uid);
+        if (gone) { group.remove(gone.holder); entries.delete(it.uid); }
+        continue;
+      }
       const isPlant = def.kind === 'plant';
       const age = isPlant ? q(ageOf(it)) : 0;
       const key = isPlant ? `${it.id}|${age}|${season}|${month}` : it.id;

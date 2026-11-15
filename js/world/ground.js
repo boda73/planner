@@ -91,15 +91,21 @@ export function createGround({ site, lawnTex, contextTex, quality, maxAniso }) {
 
   // far plane (fades into fog / horizon)
   const farMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(FAR_GROUND), roughness: 1 });
-  const far = plane(2000, 2000, PW / 2, -0.03, -PD / 2, farMat);
+  // Kept well below the other layers and subdivided: one giant quad 3 cm under the lawn lost depth precision
+  // and showed through the lawn and paving from some viewpoints.
+  const far = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000, 24, 24), farMat);
+  far.rotation.x = -Math.PI / 2;
+  far.position.set(PW / 2, -0.25, -PD / 2);
   far.receiveShadow = false;
   group.add(far);
 
   // satellite context (X −12…26, Y −11…34)
+  let context = null;
   if (contextTex) {
     contextTex.anisotropy = Math.min(8, maxAniso);
     const ctxMat = new THREE.MeshStandardMaterial({ map: contextTex, roughness: 1 });
-    group.add(plane(CTX.X1 - CTX.X0, CTX.Y1 - CTX.Y0, (CTX.X0 + CTX.X1) / 2, -0.015, -(CTX.Y0 + CTX.Y1) / 2, ctxMat));
+    context = plane(CTX.X1 - CTX.X0, CTX.Y1 - CTX.Y0, (CTX.X0 + CTX.X1) / 2, -0.015, -(CTX.Y0 + CTX.Y1) / 2, ctxMat);
+    group.add(context);
   }
 
   // lawn with world-space micro detail
@@ -120,7 +126,9 @@ export function createGround({ site, lawnTex, contextTex, quality, maxAniso }) {
         float dC = texture2D(detailTex, vWXZ * 7.1 + 0.77).r;
         diffuseColor.rgb *= (1.0 + (dA - 0.5) * 1.5) * (1.0 + (dB - 0.5) * 0.9) * (1.0 + (dC - 0.5) * 1.7);`);
   };
-  const lawn = plane(PW, PD, PW / 2, 0, -PD / 2, lawnMat);
+  // the lawn covers the whole fenced area (site.plot.bounds); lawn.jpg is baked for exactly that rectangle
+  const [BX0, BY0, BX1, BY1] = site.plot.bounds || [0, 0, PW, PD];
+  const lawn = plane(BX1 - BX0, BY1 - BY0, (BX0 + BX1) / 2, 0, -(BY0 + BY1) / 2, lawnMat);
   group.add(lawn);
 
   // soil / sand strips
@@ -147,10 +155,10 @@ export function createGround({ site, lawnTex, contextTex, quality, maxAniso }) {
   }
 
   const TINT = {
-    spring: [1.0, 1.08, 1.0], summer: [1.05, 1.05, 1.05], autumn: [1.2, 1.0, 1.7], winter: [0.95, 0.95, 1.0],
+    spring: [1.0, 1.08, 1.0], summer: [1.05, 1.05, 1.05], autumn: [1.32, 1.12, 1.15], winter: [0.95, 0.95, 1.0],
   };
   return {
-    group, lawn,
+    group, lawn, context,
     setSeason(season) { const t = TINT[season] || TINT.summer; lawnMat.color.setRGB(t[0], t[1], t[2]); },
     setOverlay(opacity) {
       if (!overlay) return;

@@ -14,6 +14,19 @@
 import * as THREE from '../lib/three.js';
 import { SITE } from '../config/site.js';
 
+/** Fenced area in plot metres. The measuring rectangle is 0…width × 0…depth; fences may lie outside it. */
+export function plotBounds() {
+  const [minX, minY, maxX, maxY] = SITE.plot.bounds || [0, 0, SITE.plot.width, SITE.plot.depth];
+  return { minX, minY, maxX, maxY };
+}
+
+/** Is a seasonal item (`months: [from, to]`) out in the given month? Items without `months` always are. */
+export function inSeason(item, month) {
+  const m = item.months;
+  if (!m) return true;
+  return m[0] <= m[1] ? month >= m[0] && month <= m[1] : month >= m[0] || month <= m[1];
+}
+
 export function toWorld(X, Y, h = 0, out = new THREE.Vector3()) {
   return out.set(X, h, -Y);
 }

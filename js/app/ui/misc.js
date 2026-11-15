@@ -1,6 +1,6 @@
 import { h, icon, openDialog } from '../dom.js';
 import { SITE } from '../../config/site.js';
-import { plotToTrueBearing } from '../../core/coords.js';
+import { plotToTrueBearing, plotBounds } from '../../core/coords.js';
 import { saveFlag } from '../storage.js';
 
 export function createCompass(app) {
@@ -29,7 +29,7 @@ export function createPlanTools(app) {
   read.textContent = 'Наведіть курсор на ділянку';
   return {
     show(v) { root.hidden = !v; read.hidden = !v; },
-    readout(p) { read.textContent = p ? `${p.X.toFixed(1)} м від західного паркану, ${p.Y.toFixed(1)} м від південного` : 'Наведіть курсор на ділянку'; },
+    readout(p) { read.textContent = p ? `${(p.X - plotBounds().minX).toFixed(1)} м від західного паркану, ${(p.Y - plotBounds().minY).toFixed(1)} м від південного` : 'Наведіть курсор на ділянку'; },
   };
 }
 

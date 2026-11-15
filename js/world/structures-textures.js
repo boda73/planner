@@ -115,7 +115,7 @@ export const oldBoardsTex = () => tex('oldBoards', 512, 512, (c, w, h, r) => {
 
 /** Burgundy-brown metal sheet colour (weathering streaks down the slope). U = along the ridge, V = down slope. */
 export const roofSheetTex = () => tex('roofSheet', 256, 256, (c, w, h, r) => {
-  c.fillStyle = '#6f2f38'; c.fillRect(0, 0, w, h);
+  c.fillStyle = '#5c2d2e'; c.fillRect(0, 0, w, h);
   for (let i = 0; i < 160; i++) {
     c.globalAlpha = 0.06 + r() * 0.08;
     c.fillStyle = r() < 0.6 ? '#4f2026' : '#8a4a50';

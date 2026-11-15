@@ -17,7 +17,11 @@ const row = (id, n, X0, Y0, X1, Y1, h, extra = {}) =>
   });
 
 export const SITE = {
-  plot: { width: 20, depth: 25 },
+  // width × depth = the 20 × 25 m rectangle everything is measured in (X = 0 lies 0.5 m west of the young thuja row).
+  // bounds = the fenced area [X0, Y0, X1, Y1]: the west fence stands ≈1.7 m further west, behind a bare strip
+  // (seen in IMG_2873 and IMG_4017, and as the brown strip on the satellite); the north fence runs along the
+  // street edge ≈1.8 m behind the hedge (IMG_4008).
+  plot: { width: 20, depth: 25, bounds: [-1.7, 0, 20, 25.4] },
   northBearingOfY: 10.5,                     // true compass bearing of the plot's +Y axis, degrees
   geo: { lat: 50.011, lon: 21.007 },
   defaultTime: { month: 7, day: 3, hour: 12.5 },
@@ -46,24 +50,24 @@ export const SITE = {
   },
   shed: {
     // New garden shed/WC: wood-look vertical slats (warm brown), dark bitumen-shingle low hip roof, grey door on the SOUTH face.
-    rect: [16.9, 22.65, 18.7, 24.45], wallH: 2.2, roofH: 0.22, overhang: 0.14, doorFace: 'south',
+    rect: [16.4, 22.65, 18.2, 24.45], wallH: 2.2, roofH: 0.22, overhang: 0.14, doorFace: 'south',
   },
 
   // ---------------------------------------------------------------- fences (on the plot boundary)
   fences: [
-    { id: 'north', from: [0, 25], to: [20, 25], h: 1.6, type: 'net' },        // wire fence + dark-green privacy net, black steel posts
-    { id: 'east', from: [20, 0], to: [20, 25], h: 1.5, type: 'chainlink' },   // old rusty-brown chain-link, concrete posts
-    { id: 'southPanel', from: [0, 0], to: [13, 0], h: 1.5, type: 'panel' },   // modern anthracite welded-wire panels
+    { id: 'north', from: [-1.7, 25.4], to: [20, 25.4], h: 1.6, type: 'net' },        // wire fence + dark-green privacy net, black steel posts
+    { id: 'east', from: [20, 0], to: [20, 25.4], h: 1.5, type: 'chainlink' },   // old rusty-brown chain-link, concrete posts
+    { id: 'southPanel', from: [-1.7, 0], to: [13, 0], h: 1.5, type: 'panel' },   // modern anthracite welded-wire panels
     { id: 'southWood', from: [13, 0], to: [20, 0], h: 1.5, type: 'wood' },    // brown vertical-board fence behind the house
-    { id: 'west', from: [0, 0], to: [0, 25], h: 1.4, type: 'mesh' },          // light wire mesh, dark-green posts every 2.5 m
+    { id: 'west', from: [-1.7, 0], to: [-1.7, 25.4], h: 1.4, type: 'mesh' },          // light wire mesh, dark-green posts every 2.5 m
   ],
 
   // ---------------------------------------------------------------- surroundings (outside the fences, approximate)
   context: {
-    road: { Y0: 25.5, Y1: 32.5 },            // street along the north side (parallel to X), pavement + asphalt
+    road: { Y0: 25.5, Y1: 29.5 },            // narrow lane along the north side (parallel to X), pavement + asphalt
     buildings: [
-      { id: 'eastHouse', center: [27.5, 21], size: [7, 9], wallH: 3.2, roof: 'gable', ridgeAlong: 'Y', roofH: 2.6, wall: '#d9d4c7', roofColor: '#3d3f45' },
-      { id: 'seHouse', center: [24.2, -4.2], size: [7, 7], wallH: 3.0, roof: 'gable', ridgeAlong: 'X', roofH: 2.4, wall: '#efece4', roofColor: '#9a3b2e' },
+      { id: 'eastHouse', center: [28.5, 15.5], size: [8, 6], wallH: 3.0, roof: 'gable', ridgeAlong: 'X', roofH: 2.2, wall: '#d9d4c7', roofColor: '#3d3f45' },
+      { id: 'seHouse', center: [25.5, -5.5], size: [7, 7], wallH: 3.0, roof: 'gable', ridgeAlong: 'X', roofH: 2.4, wall: '#efece4', roofColor: '#9a3b2e' },
       { id: 'southShed', center: [5.5, -2.9], size: [3.2, 2.4], wallH: 2.1, roof: 'mono', roofH: 0.3, wall: '#3b2a22', roofColor: '#2b2b2e' },
       { id: 'southGazebo', center: [9.8, -3.7], size: [3, 3], wallH: 2.2, roof: 'gable', ridgeAlong: 'X', roofH: 0.8, wall: '#8b7a66', roofColor: '#d7dbd8', open: true },
       { id: 'swBarn', center: [2.9, -5.6], size: [5.2, 5.5], wallH: 2.6, roof: 'gable', ridgeAlong: 'Y', roofH: 1.0, wall: '#8d8f8c', roofColor: '#b9bec4' },
@@ -84,17 +88,18 @@ export const SITE = {
       { from: [20.9, 5.5], to: [21.3, 20.5], w: 1.6, h: 2.8, kind: 'wild' },       // overgrown shrubs behind the east chain-link
       { from: [-11, 25.6], to: [-0.6, 25.6], w: 0.9, h: 2.0, kind: 'clipped' },    // west neighbour's clipped hedge along the street
     ],
-    poles: [{ X: 19.4, Y: -1.6, h: 8 }],
+    poles: [{ X: 17.8, Y: -4.5, h: 8 }],
     // far skyline to the N–NNW: pale apartment blocks ~300 m away, plus a tree line all around.
     skyline: { blocksBearing: [330, 350, 8], distance: 320 },
   },
 
   // ---------------------------------------------------------------- what stands on the plot today
   // Catalogue items (plants + furniture). `h` = present height in metres (plants: converted to an age).
+  // `months: [from, to]` = the item is only out during those months (seasonal furniture).
   // `rot` = plot bearing of the item's front. These are ordinary planner items the user can move or delete.
   existingItems: [
-    // thuja hedge along the north side, 1.4 m inside the fence, ~2.5 m tall, crowns touching
-    ...row('thuja_smaragd', 24, 0.7, 23.6, 16.35, 23.6, 2.5, { tag: 'hedgeNorth' }),
+    // thuja hedge along the north side from the west fence to the shed, 1.4 m inside the fence, ~2.5 m tall, crowns touching
+    ...row('thuja_smaragd', 26, -1.3, 23.6, 15.7, 23.6, 2.5, { tag: 'hedgeNorth' }),
     // young thujas along the west fence
     ...row('thuja_smaragd', 32, 0.5, 2.2, 0.5, 22.4, 0.75, { tag: 'rowWest' }),
     // young thujas along the south fence (west part)
@@ -128,19 +133,19 @@ export const SITE = {
     { id: 'picnic_table', X: 10.5, Y: 3.0, rot: 90 },       // long axis north–south
     { id: 'tripod_grill', X: 8.8, Y: 3.8, rot: 0 },
     { id: 'concrete_bin', X: 13.25, Y: 7.85, rot: 0 },      // on the NW corner of the terrace
-    { id: 'trampoline', X: 15.2, Y: 11.8, rot: 0 },         // Ø 3 m; seen on the satellite and in the July photos
+    { id: 'trampoline', X: 15.2, Y: 11.8, rot: 0, months: [5, 9] },   // Ø 3 m; out in summer (satellite, July photos), stored away by late October
   ],
 
   // ---------------------------------------------------------------- reference photos (assets/photos/<id>.jpg)
   // Camera poses are estimates (GPS ±4 m, compass ±15°) refined by eye. hfov/vfov are for the photo as displayed.
   photos: [
-    { id: 'IMG_4010', X: 16.0, Y: 5.3, eye: 1.55, heading: 336, pitch: -14, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Від будиночка на північ: газон, туї, сарайчик' },
-    { id: 'IMG_4017', X: 0.3, Y: 22.8, eye: 1.55, heading: 124, pitch: -7, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'З північно-західного кута на будиночок' },
+    { id: 'IMG_4010', X: 18.4, Y: 5.4, eye: 1.55, heading: 321, pitch: -14, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Від будиночка на північ: газон, туї, сарайчик' },
+    { id: 'IMG_4017', X: -1.1, Y: 22.7, eye: 1.55, heading: 119, pitch: -7, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'З північно-західного кута на будиночок' },
     { id: 'IMG_4013', X: 12.3, Y: 1.1, eye: 1.55, heading: 334, pitch: -10, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Стіл для пікніка і газон' },
     { id: 'IMG_4015', X: 15.0, Y: 6.6, eye: 1.55, heading: 258, pitch: -12, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'З бруківки на захід: сад і грядки' },
-    { id: 'IMG_4011', X: 11.3, Y: 1.5, eye: 1.55, heading: 68, pitch: -8, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Будиночок і гойдалка із заходу' },
+    { id: 'IMG_4011', X: 10.2, Y: 0.6, eye: 1.55, heading: 59, pitch: -8, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Будиночок і гойдалка із заходу' },
     { id: 'IMG_4009', X: 18.6, Y: 13.2, eye: 1.55, heading: 187, pitch: -9, hfov: 53.13, vfov: 73.74, when: { month: 10, day: 31, hour: 13.3 }, title: 'Доріжка до будиночка' },
-    { id: 'IMG_4008', X: 19.3, Y: 24.2, eye: 1.55, heading: 228, pitch: -18, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Сарайчик з північно-східного кута' },
+    { id: 'IMG_4008', X: 19.75, Y: 25.05, eye: 1.55, heading: 232, pitch: -10, hfov: 104.25, vfov: 81.2, when: { month: 10, day: 31, hour: 13.3 }, title: 'Сарайчик з північно-східного кута' },
     { id: 'IMG_4012', X: 12.6, Y: 1.4, eye: 1.55, heading: 298, pitch: -16, hfov: 81.2, vfov: 104.25, when: { month: 10, day: 31, hour: 13.3 }, title: 'Сад уздовж південного паркану' },
     { id: 'IMG_3846', X: 12.9, Y: 6.2, eye: 1.5, heading: 15, pitch: 0, hfov: 26.3, vfov: 17.7, when: { month: 10, day: 16, hour: 15.95 }, title: 'Сарайчик і туї (телеоб\'єктив)' },
     { id: 'IMG_2863', X: 12.9, Y: 3.0, eye: 1.55, heading: 259, pitch: -18, hfov: 81.2, vfov: 104.25, when: { month: 7, day: 3, hour: 12.25 }, title: 'Літо: стіл і вишні' },

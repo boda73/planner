@@ -1,4 +1,5 @@
 import { h, icon } from '../dom.js';
+import { plotBounds } from '../../core/coords.js';
 import { getDef, itemSizeAt } from '../../items/registry.js';
 import { sizeText } from './catalog.js';
 
@@ -65,7 +66,7 @@ export function createProperties(app) {
     if (plant) r.ageVal.textContent = `${f1(it.age0)} р.`;
     if (document.activeElement !== r.rot) r.rot.value = Math.round(((it.rot % 360) + 360) % 360);
     r.rotVal.textContent = `${Math.round(((it.rot % 360) + 360) % 360)}°`;
-    kv(r.dist, [['До західного паркану', `${f1(it.X)} м`], ['До південного', `${f1(it.Y)} м`]]);
+    kv(r.dist, [['До західного паркану', `${f1(it.X - plotBounds().minX)} м`], ['До південного', `${f1(it.Y - plotBounds().minY)} м`]]);
     r.move.setAttribute('aria-pressed', String(app.interaction.moving));
   }
   state.on((reason) => { if (reason !== 'time') refresh(); });

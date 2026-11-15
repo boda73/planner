@@ -1,7 +1,7 @@
 // Pointer interaction on the canvas: placement mode, picking, dragging, move mode, plus the selection highlight.
 import * as THREE from '../lib/three.js';
 import { SITE } from '../config/site.js';
-import { bearingToYaw } from '../core/coords.js';
+import { bearingToYaw, plotBounds } from '../core/coords.js';
 import { seasonOfMonth } from '../core/sun.js';
 import { createItemObject, getDef, itemSizeAt } from '../items/registry.js';
 
@@ -67,7 +67,8 @@ export function createInteraction(app) {
     if (!p) return null;
     return { X: p.x, Y: -p.z };
   }
-  const clampPlot = (p) => ({ X: Math.min(SITE.plot.width - 0.1, Math.max(0.1, p.X)), Y: Math.min(SITE.plot.depth - 0.1, Math.max(0.1, p.Y)) });
+  const B = plotBounds();
+  const clampPlot = (p) => ({ X: Math.min(B.maxX - 0.1, Math.max(B.minX + 0.1, p.X)), Y: Math.min(B.maxY - 0.1, Math.max(B.minY + 0.1, p.Y)) });
 
   function conflict(def, X, Y) {
     const sp = def.minSpacing ?? def.matureWidth ?? 1;

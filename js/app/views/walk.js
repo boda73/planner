@@ -1,6 +1,6 @@
 // First-person walk view: WASD/arrows + drag look + touch joystick, with collisions.
 import { SITE } from '../../config/site.js';
-import { poseCamera } from '../../core/coords.js';
+import { poseCamera, plotBounds } from '../../core/coords.js';
 import { h } from '../dom.js';
 
 const R = 0.25;
@@ -116,7 +116,7 @@ export function createWalk({ camera, canvas, uiRoot, world, getColliders }) {
         for (let i = 0; i < 3; i++) {
           for (const c of world?.colliders || []) if (c.type === 'box' && c.h >= 0.4) pushBox(pos, c.minX, c.minY, c.maxX, c.maxY);
           for (const c of getColliders()) { if (c.type === 'circle') pushCircle(pos, c.X, c.Y, c.r); else pushObb(pos, c); }
-          pos.X = clamp(pos.X, 0.3, SITE.plot.width - 0.3); pos.Y = clamp(pos.Y, 0.3, SITE.plot.depth - 0.3);
+          const B = plotBounds(); pos.X = clamp(pos.X, B.minX + 0.3, B.maxX - 0.3); pos.Y = clamp(pos.Y, B.minY + 0.3, B.maxY - 0.3);
         }
       }
       apply();
