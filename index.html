@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Планувальник ділянки</title>
+<link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="c" tabindex="-1"></canvas>
+  <img id="photo-overlay" alt="" hidden>
+  <div id="labels"></div>
+  <div id="ui">
+    <header id="topbar"></header>
+    <aside id="left" class="panel side left" hidden></aside>
+    <aside id="right" class="panel side right" hidden></aside>
+    <section id="dock" class="panel dock" hidden></section>
+    <div id="compass" class="compass"></div>
+    <div id="plan-tools" class="panel plan-tools" hidden></div>
+    <div id="readout" class="readout" hidden></div>
+    <div id="placement-bar" class="panel placement-bar" hidden></div>
+    <div id="photo-panel" class="panel photo-panel" hidden></div>
+    <div id="toast" class="toast" hidden></div>
+  </div>
+  <div id="dialogs"></div>
+  <div id="loading" class="loading"><div class="loading-box"><div class="spinner"></div><div id="loading-text">Завантаження…</div></div></div>
+</div>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
