@@ -7,7 +7,8 @@
 //   month=7&hour=13         sun time (defaults to SITE.defaultTime, or the photo's time)
 //   season=summer|autumn|spring|winter   (default derived from month)
 //   year=0                  years added to every plant's age
-//   items=0                 hide SITE.existingItems     world=0  skip the world module
+//   items=0                 hide SITE.existingItems     world=0  skip the world module (plain lights + grey ground;
+//                           house and shed are still built straight from js/world/structures.js unless structures=0)
 //   only=<tag|id>           show only existing items with that tag or id
 //   labels=1                print item ids at their positions (top view helper)
 // Sets window.__READY = true once everything is loaded and one frame is rendered; errors go to #err.
@@ -88,6 +89,16 @@ async function main() {
     const d = new THREE.DirectionalLight(0xffffff, 2);
     d.position.set(-10, 30, 10);
     scene.add(d);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x8c9480, roughness: 1 }));
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set(10, -0.001, -12.5);
+    scene.add(floor);
+    if (q.get('structures') !== '0') {
+      try {
+        const { createStructures } = await import('../js/world/structures.js');
+        scene.add(createStructures(SITE).group);
+      } catch (err) { console.error('[view] structures failed:', err); }
+    }
   }
 
   if (q.get('items') !== '0') {
